@@ -22,12 +22,8 @@ Vlan    Mac Address       Type        Ports
  200    0a4b.c380.7c00    DYNAMIC     Gi0/2
  300    a2ab.c5a0.700e    DYNAMIC     Gi0/3
 '''
-mac_dictionary = {}
 with open('CAM_table.txt', 'r') as f:
     for line in f:
-        line_list = line.split('    ')
+        line_list = line.split('   ')
         if line_list[0][1:].isdigit():
-            mac_dictionary[line_list[0][1:]]={}
-            mac_dictionary[line_list[0][1:]]['mac']=line_list[1]
-            mac_dictionary[line_list[0][1:]]['port']=line_list[3]
             print (line_list[0]+'    '+line_list[1]+'    '+line_list[3].rstrip())
