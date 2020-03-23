@@ -17,3 +17,10 @@
 '''
 
 ignore = ['duplex', 'alias', 'Current configuration']
+from sys import argv
+filename = argv[1]
+filename_dest = argv[2]
+with open(filename, 'r') as f, open(filename_dest, 'w') as dest:
+    for line in f:
+        if not(any(word in line for word in ignore)):
+            dest.write(line)

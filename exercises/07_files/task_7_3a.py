@@ -22,3 +22,11 @@
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 
 '''
+mac_dictionary = {}
+with open('CAM_table.txt', 'r') as f:
+    for line in f:
+        line_list = line.split('    ')
+        if line_list[0][1:].isdigit():
+            mac_dictionary['mac']=line_list[1]
+            mac_dictionary[line_list[0][1:]]['port']=line_list[3]
+{k: v for k, v in sorted(mac_dictionary.items(), key=lambda item: item[0])}
