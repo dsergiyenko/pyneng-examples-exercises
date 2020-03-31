@@ -40,5 +40,28 @@ access_config = {
     'FastEthernet0/16': 17
 }
 
+def generate_access_config(intf_vlan_mapping, access_template, psecurity=None):
+    '''
+    intf_vlan_mapping - словарь с соответствием интерфейс-VLAN такого вида:
+        {'FastEthernet0/12':10,
+         'FastEthernet0/14':11,
+         'FastEthernet0/16':17}
+    access_template - список команд для порта в режиме access
+
+    Возвращает список всех портов в режиме access с конфигурацией на основе шаблона
+    '''
+    conflist=[]
+    for key in intf_vlan_mapping:
+        conflist.append('interface '+key)
+        if psecurity != None:
+            for line in psecurity: conflist.append(line)
+        for line in access_template:
+            if line.endswith('switchport access vlan'):
+                conflist.append(line+' '+ str(intf_vlan_mapping[key]) )
+            else: conflist.append(line)
+    print(conflist)
+    return conflist
+
+
 
 

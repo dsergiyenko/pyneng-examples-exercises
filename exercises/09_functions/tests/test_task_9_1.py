@@ -46,6 +46,7 @@ def test_function_return_value():
                             'spanning-tree bpduguard enable']
 
     return_value = task_9_1.generate_access_config(access_vlans_mapping, template_access_mode)
+    print(return_value)
     assert return_value != None, "Функция ничего не возвращает"
     assert type(return_value) == list, "Функция должна возвращать список"
     assert return_value == correct_return_value, "Функция возвращает неправильное значение"
