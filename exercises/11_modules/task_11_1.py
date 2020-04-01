@@ -51,9 +51,12 @@ def parse_cdp_neighbors(command_output):
     for line in linelist:
         if '>' in line:
             my_host = line.split('>')[0]
+            print(my_host)
         if 'Eth' in line:
             list1.append((my_host, line.split()[1]+line.split()[2]))
             list2.append((line.split()[0], line.split()[-2]+line.split()[-1]))
+            print(list1)
+            print(list2)
     return dict(zip(list1, list2))
 
 
