@@ -43,7 +43,7 @@ R6           Eth 0/5         121           R S I           2811       Eth 0/1
 
 
 def parse_cdp_neighbors(command_output):
-    linelist = lines.split('\n')
+    linelist = command_output.split('\n')
     my_host = ''
 
     list1 = []
