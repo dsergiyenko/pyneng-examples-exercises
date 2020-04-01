@@ -26,5 +26,39 @@ R6           Fa 0/2          143           R S I           2811       Fa 0/0
 Проверить работу функции на содержимом файла sh_cdp_n_sw1.txt
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
+========================================================
+SW1>show cdp neighbors
+
+Capability Codes: R - Router, T - Trans Bridge, B - Source Route Bridge
+                  S - Switch, H - Host, I - IGMP, r - Repeater, P - Phone
+
+Device ID    Local Intrfce   Holdtme     Capability       Platform    Port ID
+R1           Eth 0/1         122           R S I           2811       Eth 0/0
+R2           Eth 0/2         143           R S I           2811       Eth 0/0
+R3           Eth 0/3         151           R S I           2811       Eth 0/0
+R6           Eth 0/5         121           R S I           2811       Eth 0/1
+========================================================
+
 '''
 
+
+def parse_cdp_neighbors(command_output):
+    linelist = lines.split('\n')
+    my_host = ''
+
+    list1 = []
+    list2 = []
+    for line in linelist:
+        if '>' in line:
+            my_host = line.split('>')[0]
+        if 'Eth' in line:
+            list1.append((my_host, line.split()[1]+line.split()[2]))
+            list2.append((line.split()[0], line.split()[-2]+line.split()[-1]))
+    return dict(zip(list1, list2))
+
+
+lines = ''
+with open('sh_cdp_n_sw1.txt', 'r') as f:
+    lines = f.read()
+
+parse_cdp_neighbors(lines)
