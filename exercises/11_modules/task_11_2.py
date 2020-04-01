@@ -40,4 +40,22 @@ Cгенерировать топологию, которая соответст�
 > pip install graphviz
 
 '''
+from task_11_1 import parse_cdp_neighbors
+from draw_network_graph import draw_topology
 
+
+file_names = ['sh_cdp_n_sw1.txt', 'sh_cdp_n_r1.txt',
+             'sh_cdp_n_r2.txt', 'sh_cdp_n_r3.txt']
+
+
+def create_network_map(filenames):
+    lines = ''
+    for file in filenames:
+        with open(file, 'r') as f:
+            lines = lines + f.read()
+
+    return parse_cdp_neighbors(lines)
+
+topology = create_network_map(file_names)
+
+draw_topology(topology)
