@@ -64,7 +64,7 @@ def draw_topology(topology_dict, output_filename='img/topology'):
         for item in list(topology_dict.keys()) + list(topology_dict.values())
     ])
 
-    g1 = gv.Graph(format='svg')
+    g1 = gv.Graph(format='png')
 
     for node in nodes:
         g1.node(node)
