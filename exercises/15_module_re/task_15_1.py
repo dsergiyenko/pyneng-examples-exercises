@@ -20,5 +20,16 @@
 
 Обратите внимание, что в данном случае, можно не проверять корректность IP-адреса,
 диапазоны адресов и так далее, так как обрабатывается вывод команды, а не ввод пользователя.
-
+ ip address 10.0.19.1 255.255.255.0
 '''
+
+import re
+
+
+def get_ip_from_cfg(filename):
+    config = open(filename).read()
+    return re.findall(r'ip address (\d+.\d+.\d+.\d+) +(\d+.\d+.\d+.\d+)', config)
+
+
+if __name__ == '__main__':
+    print( get_ip_from_cfg('config_r1.txt') )

@@ -20,5 +20,21 @@
 
 Обратите внимание, что в данном случае, можно не проверять корректность IP-адреса,
 диапазоны адресов и так далее, так как обрабатывается вывод команды, а не ввод пользователя.
-
+interface Ethernet0/3
 '''
+import re
+from pprint import pprint
+
+#checked in windows
+def get_ip_from_cfg(filename):
+	result_dict={}
+	config = open(filename).read()
+	result = re.findall(r'interface (.+)(.*\n){0,3} ip address (\d+.\d+.\d+.\d+) (\d+.\d+.\d+.\d+)', config)
+	if result:
+		for interface, trash, ip, mask in result:
+			result_dict.update({interface:(ip,mask)})
+	return result_dict
+
+
+if __name__ == '__main__':
+    pprint( get_ip_from_cfg('config_r1.txt') )
