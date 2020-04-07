@@ -15,7 +15,7 @@
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 '''
 import subprocess
-addresses = ['1.1.1', '8.8.8.8', '8.8.4.4', '8.8.7.1']
+from pprint import pprint
 
 
 def ping_ip_addresses(ip_list):
@@ -30,3 +30,7 @@ def ping_ip_addresses(ip_list):
             fail_list.append(address)
     return tuple([success_list, fail_list])
 
+
+if __name__ == '__main__':
+    list_ip = ['1.1.1', '8.8.8.8', '8.8.4.4', '8.8.7.1']
+    pprint(ping_ip_addresses(list_ip))
