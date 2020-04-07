@@ -25,5 +25,21 @@
 
 Ограничение: Все задания надо выполнять используя только пройденные темы.
 '''
+import task_15_2
+from pprint import pprint
 
 headers = ['interface', 'address', 'status', 'protocol']
+result = task_15_2.parse_sh_ip_int_br('sh_ip_int_br.txt')
+
+def convert_to_dict(headers, list_of_tuples):
+    result = []
+    for interface in list_of_tuples:
+        result.append(dict(zip(headers, interface)))
+
+    return result
+
+
+if __name__ == '__main__':
+    headers = ['interface', 'address', 'status', 'protocol']
+    result = task_15_2.parse_sh_ip_int_br('sh_ip_int_br.txt')
+    pprint( convert_to_dict(headers, result) )

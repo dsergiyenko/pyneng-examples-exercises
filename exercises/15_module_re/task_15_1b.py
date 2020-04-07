@@ -26,3 +26,24 @@ Ethernet0/1 соответствует список из двух кортеже
 
 '''
 
+import re
+from pprint import pprint
+
+#checked in windows
+def get_ip_from_cfg(filename):
+    result_dict={}
+    config = open('config_r2.txt').read()
+    result = re.findall(r'interface (.+)(.*\n){0,3} ip address (\d+.\d+.\d+.\d+) (\d+.\d+.\d+.\d+)', config)
+    result2 = re.findall(r'interface (.+)(.*\n){0,3} ip address (\d+.\d+.\d+.\d+) (\d+.\d+.\d+.\d+).*\n ip address (\d+.\d+.\d+.\d+) (\d+.\d+.\d+.\d+) secondary', config)
+    if result:
+        for interface, trash, ip, mask in result:
+            result_dict.update({interface:[(ip,mask)]})
+    if result2:
+        for interface, trash, ip, mask, ip_second, mask_second in result2:
+            result_dict.update({interface:[(ip,mask),(ip_second,mask_second)]})
+
+    return result_dict
+
+
+if __name__ == '__main__':
+    pprint( get_ip_from_cfg('config_r2.txt') )
