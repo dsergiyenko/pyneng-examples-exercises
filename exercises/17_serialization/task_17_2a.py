@@ -32,3 +32,36 @@
 Проверить работу параметра save_to_filename и записать итоговый словарь в файл topology.yaml.
 
 '''
+import glob
+import re
+import csv
+from pprint import pprint
+import yaml
+
+
+sh_version_files = glob.glob('sh_cdp_n*')
+print(sh_version_files)
+
+import re
+from pprint import pprint
+
+
+def generate_topology_from_cdp(list_of_files, save_to_filename=None):
+    result_dict = {}
+    for my_file in list_of_files:
+        with open(my_file) as f:
+            command_output = f.read()
+        hostname = re.findall(r'(\S+)>', command_output)
+        result = re.findall(r'(\S+) +(\S+ \d+/\d+).+ (\S+ \d+/\d+)\n', command_output)
+        result_dict.update({ hostname[0] : {} })
+        for link in result:
+             result_dict[hostname[0]].update({link[1]: {link[0]: link[2]}})
+    pprint( result_dict )
+    if save_to_filename:
+        with open(save_to_filename, 'w') as f_out:
+            yaml.dump(result_dict, f_out)
+    return result_dict
+
+
+if __name__ == '__main__':
+    generate_topology_from_cdp(sh_version_files)

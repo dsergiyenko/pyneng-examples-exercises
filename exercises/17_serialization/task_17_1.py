@@ -37,11 +37,41 @@
 Вы можете раскомментировать строку print(sh_version_files), чтобы посмотреть содержимое списка.
 
 Кроме того, создан список заголовков (headers), который должен быть записан в CSV.
+
+
+BOOTLDR: 7200 Software (C7200-KBOOT-M), Version 12.3(16), RELEASE SOFTWARE (fc4)
+router uptime is 15 days, 8 hours, 32 minutes
+System image file is "flash:c1841-advipservicesk9-mz.124-15.T1.bin"
 '''
 
 import glob
+import re
+import csv
+from pprint import pprint
 
 sh_version_files = glob.glob('sh_vers*')
 #print(sh_version_files)
 
 headers = ['hostname', 'ios', 'image', 'uptime']
+
+def parse_sh_version(sh_ver_as_one_line):
+    result = re.match(r'Cisco IOS Software.+?Version (\S+),.+?uptime is (.+minutes).+?image file is "(.+?)"', sh_ver_as_one_line, re.DOTALL)
+    return (result.group(1), result.group(3), result.group(2))
+
+result=[]
+def write_inventory_to_csv(data_filenames_in, csv_filename_out):
+    f_out = open(csv_filename_out, 'w', newline='')
+    writer = csv.writer(f_out)
+    writer.writerow(headers)
+    for name in data_filenames_in:
+        with open(name) as f:
+            command_output = f.read()
+            result = parse_sh_version(command_output)
+            result_list = []
+            result_list.append(name.split('_')[2].split('.')[0])
+            for item in result: result_list.append(item)
+            writer.writerow(result_list)
+
+
+if __name__ == '__main__':
+    write_inventory_to_csv(sh_version_files, 'sh_ver_out.csv')

@@ -24,3 +24,23 @@ R6           Fa 0/2          143           R S I           2811       Fa 0/0
 
 Проверить работу функции на содержимом файла sh_cdp_n_sw1.txt
 '''
+
+
+import re
+from pprint import pprint
+
+
+def parse_sh_cdp_neighbors(filename):
+    with open(filename) as f:
+        command_output = f.read()
+    hostname = re.findall(r'(\S+)>', command_output)
+    result = re.findall(r'(\S+) +(\S+ \d+/\d+).+ (\S+ \d+/\d+)\n', command_output)
+    result_dict = {}
+    result_dict.update({ hostname[0] : {} })
+    for link in result:
+         result_dict[hostname[0]].update({link[1]: {link[0]: link[2]}})
+    return result_dict
+
+
+if __name__ == '__main__':
+    parse_sh_cdp_neighbors('sh_cdp_n_sw1.txt')
