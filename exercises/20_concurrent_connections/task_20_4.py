@@ -82,3 +82,47 @@ R3#
 
 Для выполнения задания можно создавать любые дополнительные функции.
 '''
+# -*- coding: utf-8 -*-
+
+import yaml
+from netmiko import (NetMikoAuthenticationException, NetMikoTimeoutException, ConnectHandler)
+from concurrent.futures import ThreadPoolExecutor
+from itertools import repeat
+
+    
+
+def connect_ssh(devices, command):
+    result=''
+    try:
+        with ConnectHandler(**devices) as net_connect:
+            net_connect.enable()
+            hostname = net_connect.find_prompt()[:-1]
+            if type(command) == str:
+                result += hostname+'# '+command+'\n'
+                print('Connection to device: '+hostname )
+                result += net_connect.send_command(command)
+                result += '\n'
+            elif type(command) == list:
+                #result += hostname+'# ' + command + '\n'
+                print('Connection to device: '+hostname )
+                result += net_connect.send_config_set(command)
+            net_connect.disconnect()
+    except (NetMikoTimeoutException, NetMikoAuthenticationException) as e:
+        print(e)
+    return result
+
+def send_commands_to_devices(devices, filename, show=None, config=None,  limit=3):
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+        if show != None:
+            f_result = executor.map(connect_ssh, devices, repeat(show) )
+        elif config != None:
+            f_result = executor.map(connect_ssh, devices, repeat(config) )
+    with open(filename, 'w') as f:
+        for i in f_result: f.write(i)
+
+
+if __name__ == '__main__':
+    with open("devices.yaml") as devices_file:
+        devices = yaml.safe_load(devices_file)
+        send_commands_to_devices( devices, filename='result.txt', show='show int des')
+        send_commands_to_devices( devices, filename='result2.txt', config=['router ospf 55', 'network 0.0.0.0 255.255.255.255 area 0'])

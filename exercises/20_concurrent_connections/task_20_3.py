@@ -36,7 +36,47 @@ Ethernet0/1                unassigned      YES NVRAM  administratively down down
 Проверить работу функции на устройствах из файла devices.yaml и словаре commands
 '''
 
-commands = {'192.168.100.1': 'sh ip int br',
-            '192.168.100.2': 'sh arp',
-            '192.168.100.3': 'sh ip int br'}
+
+
+# -*- coding: utf-8 -*-
+
+import yaml
+from netmiko import (NetMikoAuthenticationException, NetMikoTimeoutException, ConnectHandler)
+from concurrent.futures import ThreadPoolExecutor
+from itertools import repeat
+
+    
+
+def connect_ssh(devices, commands_dict):
+    result=''
+    try:
+        with ConnectHandler(**devices) as net_connect:
+            net_connect.enable()
+            hostname = net_connect.find_prompt()[:-1]
+            result += hostname+'# '+ commands_dict[devices['ip']] +'\n'
+            print('Connection to device: '+hostname )
+            result += net_connect.send_command(commands_dict[devices['ip']])
+            result += '\n'
+            net_connect.disconnect()
+    except (NetMikoTimeoutException, NetMikoAuthenticationException) as e:
+        print(e)
+    return result
+
+def send_command_to_devices(devices, commands_dict, filename, limit=3):
+    with ThreadPoolExecutor(max_workers=limit) as executor:
+        f_result = executor.map(connect_ssh, devices, repeat(commands_dict) )
+    with open(filename, 'w') as f:
+        for i in f_result: f.write(i)
+
+
+if __name__ == '__main__':
+    commands = {'192.168.10.1': 'sh ip int br',
+            '192.168.10.2': 'sh arp',
+            '192.168.10.3': 'sh ip int br'}
+
+    with open("devices.yaml") as devices_file:
+        devices = yaml.safe_load(devices_file)
+        send_command_to_devices( devices, commands, 'result.txt', 3)
+
+
 
